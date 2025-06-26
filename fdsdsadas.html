@@ -1,0 +1,2883 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Włamanie - System Hackowania Biżuterii</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* === BASE STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', 'Courier New', monospace;
+            background: linear-gradient(135deg, #020205, #080812, #070915); /* Even darker, subtle background */
+            color: #40c0c0; /* Brighter, vibrant cyan for contrast */
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.05; /* Slightly increased opacity for more presence */
+            pointer-events: none;
+            background-image:
+                radial-gradient(1.8px 1.8px at 20% 30%, #00ffff, transparent), /* Brighter cyan for effect */
+                radial-gradient(1.8px 1.8px at 40% 70%, #00ff00, transparent), /* Brighter green */
+                radial-gradient(0.9px 0.9px at 90% 40%, #ff00ff, transparent); /* Brighter magenta */
+            background-size: 100px 100px, 200px 200px, 150px 150px; /* Slightly larger patterns */
+            animation: matrix-scroll 15s linear infinite; /* Faster scroll */
+        }
+
+        @keyframes matrix-scroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100px); } /* Adjusted based on larger size */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+            padding: 25px;
+            background: rgba(0, 150, 150, 0.08); /* More vibrant cyan rgba */
+            border: 1.5px solid #00ffff; /* Brighter cyan border */
+            border-radius: 12px; /* More rounded */
+            backdrop-filter: blur(6px); /* More blur */
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2); /* Stronger glow effect */
+            position: relative; /* For admin link positioning */
+        }
+
+        .admin-link {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 0.85rem;
+            color: rgba(0, 255, 255, 0.4);
+            cursor: pointer;
+            transition: color 0.2s ease, text-shadow 0.2s ease;
+            text-decoration: none;
+            z-index: 10; /* Ensure it's above other elements */
+        }
+
+        .admin-link:hover {
+            color: #00ffff;
+            text-shadow: 0 0 8px #00ffff;
+        }
+
+        .title {
+            font-size: 3.2rem; /* Larger */
+            font-weight: 900;
+            text-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff; /* Intense glow */
+            margin-bottom: 10px;
+            animation: glow-pulse 2.5s ease-in-out infinite, glitch-text 1s linear infinite alternate; /* Faster pulse, added glitch */
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { text-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff; }
+            50% { text-shadow: 0 0 25px #00ffff, 0 0 40px #00ffff; } /* More intense glow */
+        }
+
+        @keyframes glitch-text {
+            0% { transform: translate(0); text-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff; }
+            20% { transform: translate(-2px, 2px); text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ff00; }
+            40% { transform: translate(3px, -3px); text-shadow: 0 0 20px #00ffff, 0 0 30px #ff00ff; }
+            60% { transform: translate(-1px, 1px); text-shadow: 0 0 15px #00ff00, 0 0 25px #00ffff; }
+            80% { transform: translate(2px, -2px); text-shadow: 0 0 20px #ff00ff, 0 0 30px #00ffff; }
+            100% { transform: translate(0); text-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff; }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0a0a0; /* Slightly lighter grey */
+            margin-bottom: 20px;
+        }
+
+        .difficulty-selector {
+            margin-top: 20px;
+        }
+
+        .difficulty-selector label {
+            margin-right: 10px;
+            font-weight: bold;
+            color: #00ffff; /* Cyan label */
+        }
+
+        .cyber-select {
+            background: #000; /* Pure black */
+            color: #00ffff; /* Cyan */
+            border: 1.5px solid #00ffff; /* Cyan border */
+            padding: 10px;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .cyber-select:focus {
+            outline: none;
+            box-shadow: 0 0 12px rgba(0, 255, 255, 0.8);
+            transform: scale(1.02);
+        }
+
+        /* === BUTTON STYLES === */
+        .cyber-button {
+            background: linear-gradient(45deg, #007070, #00a0a0); /* Stronger cyan gradient */
+            color: #e0f0f0; /* Off-white for contrast */
+            border: 1px solid #00ffff;
+            padding: 14px 30px;
+            margin: 10px;
+            border-radius: 25px; /* More rounded */
+            font-family: inherit;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition */
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4); /* Stronger initial glow */
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
+        }
+
+        .cyber-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -120%; /* Start further left */
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent); /* Brighter shimmer */
+            transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1); /* Slower, more impactful shimmer */
+        }
+
+        .cyber-button:hover::before {
+            left: 120%; /* End further right */
+        }
+
+        .cyber-button:hover {
+            transform: translateY(-3px) scale(1.02); /* More noticeable lift and scale */
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8), 0 0 30px rgba(0, 255, 255, 0.6); /* Intense glow on hover */
+        }
+
+        .cyber-button:active {
+            transform: translateY(0);
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+        }
+
+        .cyber-button.red {
+            background: linear-gradient(45deg, #a00000, #ff0000); /* Brighter red */
+            border-color: #ff0000;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+        }
+        .cyber-button.red:hover {
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.6);
+        }
+
+
+        .cyber-button.secondary {
+            background: transparent;
+            color: #00ffff; /* Cyan */
+            border: 1.5px solid #00ffff; /* Cyan */
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.2);
+        }
+        .cyber-button.secondary:hover {
+            background: rgba(0, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
+        }
+
+        .cyber-button:disabled {
+            opacity: 0.3; /* More transparent when disabled */
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            filter: grayscale(80%); /* Desaturate */
+        }
+
+        /* === GAME STAGES === */
+        .game-stage {
+            background: rgba(0, 0, 0, 0.85); /* Darker and less transparent */
+            border: 2px solid #00ffff; /* Brighter, thicker border */
+            border-radius: 15px; /* More rounded */
+            padding: 30px; /* More padding */
+            margin: 20px 0;
+            position: relative;
+            backdrop-filter: blur(10px); /* More blur */
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.3), inset 0 0 15px rgba(0, 255, 255, 0.1); /* Inner and outer glow */
+            overflow: hidden; /* For pseudo-elements */
+        }
+        .game-stage::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 255, 0.05); /* Very subtle inner border glow */
+            pointer-events: none;
+        }
+
+        .game-stage.hidden {
+            display: none;
+        }
+
+        .stage-title {
+            font-size: 2.2rem; /* Larger */
+            text-align: center;
+            margin-bottom: 25px;
+            text-shadow: 0 0 12px currentColor, 0 0 20px currentColor; /* Stronger glow */
+            font-weight: 900;
+            letter-spacing: 1px;
+            position: relative; /* For scan-line animation */
+        }
+
+        .stage-description {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+            color: #c0c0c0; /* Lighter grey */
+            line-height: 1.6;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .status-display {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 150, 150, 0.12); /* More vibrant rgba */
+            border-radius: 10px;
+            border: 1px solid rgba(0, 255, 255, 0.3); /* Brighter border */
+            box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.2);
+        }
+
+        .status-display div {
+            text-align: center;
+            font-weight: bold;
+            color: #00ffff; /* Consistent cyan */
+            font-size: 1.05rem;
+        }
+
+        .status-display span {
+            color: #00ff00; /* Vibrant green for status */
+            margin-left: 8px;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        /* === PROGRESS AND ACHIEVEMENTS === */
+        .progress-overview {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.7); /* Darker, less transparent */
+            border: 1.5px solid #00ffff; /* Brighter cyan */
+            border-radius: 12px;
+            backdrop-filter: blur(6px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), inset 0 0 10px rgba(0, 255, 255, 0.1);
+        }
+
+        .overall-progress {
+            margin-bottom: 20px;
+        }
+
+        .progress-label {
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #00ffff; /* Consistent cyan */
+            font-size: 1.1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px; /* Thicker */
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #00ffff; /* Brighter cyan */
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 0 8px rgba(0, 255, 255, 0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00e000, #00a0a0); /* Vibrant green to cyan */
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother transition */
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.6), 0 0 12px rgba(0, 255, 0, 0.4); /* Stronger glow */
+        }
+
+        .achievements {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); /* Larger min-width */
+            gap: 12px;
+        }
+
+        .achievement {
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #555; /* Darker border */
+            border-radius: 8px;
+            text-align: center;
+            opacity: 0.3; /* Less opaque when not completed */
+            transition: all 0.3s ease;
+            color: #a0a0a0; /* Muted grey text */
+            box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.05);
+        }
+
+        .achievement.completed {
+            opacity: 1; /* Fully opaque when completed */
+            border-color: #00ff00; /* Vibrant green */
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.6), inset 0 0 8px rgba(0, 255, 0, 0.3); /* Stronger glow */
+            background: rgba(0, 255, 0, 0.1); /* Vibrant green rgba */
+            color: #00ff00; /* Vibrant green text */
+            transform: scale(1.02); /* Slight scale on completion */
+        }
+
+        .achievement-icon {
+            display: block;
+            font-size: 1.8rem; /* Larger icon */
+            margin-bottom: 6px;
+            filter: drop-shadow(0 0 5px currentColor); /* Icon glow */
+        }
+
+        .achievement-text {
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* === CHALLENGE GRID === */
+        .intro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Larger min-width */
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .challenge-card {
+            background: rgba(0, 0, 0, 0.65); /* Darker and more transparent */
+            border: 1.5px solid #00ffff; /* Brighter cyan */
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .challenge-card::after { /* Glitch effect on hover */
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(45deg, rgba(255,0,255,0.1), rgba(0,255,255,0.1));
+            mix-blend-mode: overlay;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .challenge-card:hover::after {
+            opacity: 1;
+        }
+
+        .challenge-card:hover {
+            transform: translateY(-5px) scale(1.02); /* More movement and scale */
+            box-shadow: 0 10px 25px rgba(0, 255, 255, 0.4); /* Stronger shadow */
+            border-color: #00ff00; /* Vibrant green on hover */
+        }
+
+        .challenge-icon {
+            font-size: 3.5rem; /* Larger icon */
+            margin-bottom: 10px;
+            display: block;
+            color: #00ffff; /* Consistent cyan */
+            filter: drop-shadow(0 0 8px currentColor); /* Icon glow */
+        }
+
+        .challenge-card h3 {
+            margin: 10px 0;
+            color: #00ffff; /* Consistent cyan */
+            font-size: 1.25rem;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+
+        .challenge-card p {
+            margin-bottom: 15px;
+            color: #c0c0c0;
+            font-size: 0.95rem;
+        }
+
+        .challenge-status {
+            margin-top: 15px;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            background: rgba(255, 0, 0, 0.18); /* Vibrant red rgba */
+            border: 1px solid #ff0000; /* Vibrant red */
+            color: #ff5555; /* Slightly brighter red for contrast on background */
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+        }
+
+        .challenge-status.completed {
+            background: rgba(0, 255, 0, 0.18); /* Vibrant green rgba */
+            border-color: #00ff00; /* Vibrant green */
+            color: #00ff00; /* Vibrant green */
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+        }
+
+        /* === SPECIFIC CHALLENGE STYLES === */
+        .password-matrix {
+            background: #000;
+            border: 2px solid #00ff00; /* Vibrant green border */
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 17px; /* Slightly larger */
+            line-height: 1.3;
+            color: #00ff00; /* Vibrant green */
+            min-height: 300px; /* Larger height */
+            overflow: hidden;
+            position: relative;
+            text-align: center;
+            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
+        }
+        .password-matrix p { /* Style for password instruction text */
+            color: #a0a0a0;
+            font-size: 1em;
+            margin-bottom: 15px;
+            text-shadow: 0 0 3px rgba(0,0,0,0.5);
+        }
+
+        .matrix-line {
+            margin: 5px 0;
+            opacity: 0.8; /* More opaque */
+            transition: all 0.2s ease;
+            text-shadow: 0 0 2px rgba(0, 255, 0, 0.2);
+        }
+
+        .matrix-line:hover {
+            background: rgba(0, 255, 0, 0.1); /* Vibrant green rgba */
+            opacity: 1; /* Fully opaque on hover */
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+        }
+
+        .matrix-line.password {
+            color: #ffff00; /* Vibrant yellow for password */
+            font-weight: bold;
+            font-size: 1.2em; /* More emphasis */
+            text-shadow: 0 0 8px #ffff00, 0 0 15px #ffff00; /* Stronger glow */
+            animation: pulse-password 1s infinite alternate; /* Pulsing effect */
+        }
+        @keyframes pulse-password {
+            0% { text-shadow: 0 0 8px #ffff00, 0 0 15px #ffff00; }
+            100% { text-shadow: 0 0 12px #ffff00, 0 0 20px #ffff00; }
+        }
+
+        /* New styles for password input */
+        .password-input-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            align-items: center;
+            justify-content: center; /* Center the input */
+        }
+
+        .password-input {
+            background: #000;
+            border: 1.5px solid #00ff00; /* Vibrant green */
+            color: #00ff00; /* Vibrant green */
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px; /* Larger font */
+            width: 300px; /* Wider */
+            text-align: center; /* Center text */
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .password-input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.8), inset 0 0 8px rgba(0, 255, 0, 0.3);
+            transform: scale(1.01);
+        }
+
+
+        .hack-canvas {
+            border: 2px solid #00ffff; /* Brighter cyan, thicker border */
+            border-radius: 10px;
+            background: #000;
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 0 18px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.1);
+        }
+
+        .camera-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .camera-monitor {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1.5px solid #ffaa00; /* Vibrant orange */
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 12px rgba(255, 170, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .camera-monitor.hacked {
+            border-color: #00ff00; /* Vibrant green */
+            background: rgba(0, 255, 0, 0.12); /* Vibrant green rgba */
+            box-shadow: 0 0 18px rgba(0, 255, 0, 0.6);
+            transform: scale(1.02);
+        }
+
+        .camera-feed {
+            width: 100%;
+            border: 1px solid #ffaa00; /* Vibrant orange */
+            border-radius: 6px;
+            padding: 10px;
+            background: #111;
+            box-shadow: inset 0 0 5px rgba(255, 170, 0, 0.2);
+        }
+
+        .camera-feed h4 {
+            margin-bottom: 10px;
+            color: #ffaa00; /* Vibrant orange */
+            font-size: 1.1rem;
+            text-shadow: 0 0 5px rgba(255, 170, 0, 0.5);
+        }
+
+        .camera-indicator {
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-weight: bold;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .camera-indicator.active {
+            background: rgba(255, 0, 0, 0.25); /* Vibrant red rgba */
+            color: #ff0000;
+            border: 1px solid #ff0000; /* Vibrant red */
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+        }
+
+        .camera-indicator.inactive {
+            background: rgba(0, 255, 0, 0.25); /* Vibrant green rgba */
+            color: #00ff00; /* Vibrant green */
+            border: 1px solid #00ff00; /* Vibrant green */
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
+        }
+
+        .terminal-display {
+            background: #000;
+            border: 2px solid #00ff00; /* Vibrant green */
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #00ff00; /* Vibrant green */
+            min-height: 400px; /* Larger height */
+            overflow-y: auto;
+            white-space: pre-wrap;
+            box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.3);
+            text-shadow: 0 0 2px rgba(0, 255, 0, 0.3);
+        }
+
+        .terminal-line {
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+
+        .terminal-line.command {
+            color: #00ffff; /* Cyan for commands */
+        }
+        .terminal-line.output {
+            color: #e0e0e0; /* Lighter grey for general output */
+        }
+        .terminal-line.error {
+            color: #ff5555; /* Red for errors */
+        }
+        .terminal-line.success {
+            color: #00ff00; /* Green for success */
+        }
+
+        .terminal-input-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .terminal-input {
+            flex: 1;
+            background: #000;
+            border: 1.5px solid #00ff00; /* Vibrant green */
+            color: #00ff00; /* Vibrant green */
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .terminal-input:focus {
+            outline: none;
+            box-shadow: 0 0 12px rgba(0, 255, 0, 0.8), inset 0 0 6px rgba(0, 255, 0, 0.3);
+            transform: scale(1.005);
+        }
+
+        .cursor {
+            animation: cursor-blink 0.7s infinite step-end; /* Faster blink */
+            text-shadow: 0 0 5px #00ffff;
+        }
+
+        @keyframes cursor-blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* === NEW ARROW GAME STYLES (STAGE 5) === */
+        #arrowGameCanvas {
+            border: 2px solid #ff00ff; /* Vibrant magenta */
+            border-radius: 10px;
+            background: #0a000a; /* Dark magenta-ish background */
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 0 18px rgba(255, 0, 255, 0.3), inset 0 0 10px rgba(255, 0, 255, 0.1);
+        }
+
+        .arrow-input-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        .arrow-button {
+            background: linear-gradient(45deg, #700070, #a000a0); /* Magenta gradient */
+            color: #e0f0f0;
+            border: 1px solid #ff00ff; /* Vibrant magenta */
+            padding: 15px 25px; /* Larger buttons */
+            border-radius: 10px;
+            font-size: 2rem; /* Large arrow icon */
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.4);
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
+            width: 80px; /* Fixed width to ensure square */
+            height: 80px; /* Fixed height to ensure square */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .arrow-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8), 0 0 30px rgba(255, 0, 255, 0.6);
+        }
+
+        .arrow-button:active {
+            transform: translateY(0);
+            box-shadow: 0 0 8px rgba(255, 0, 255, 0.4);
+        }
+
+        /* Basic Arrow Styling using unicode characters */
+        .arrow-up { transform: rotate(-90deg); }
+        .arrow-down { transform: rotate(90deg); }
+        .arrow-left { transform: rotate(180deg); }
+        .arrow-right { transform: rotate(0deg); }
+
+        .arrow-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 150px; /* More space for the arrow */
+            font-size: 8rem; /* Very large arrow */
+            color: #ff00ff; /* Magenta color */
+            text-shadow: 0 0 20px #ff00ff, 0 0 40px rgba(255,0,255,0.5);
+            margin-bottom: 20px;
+            position: relative;
+            animation: arrow-pulse 1s infinite alternate; /* Pulsing effect */
+        }
+
+        @keyframes arrow-pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+
+        .arrow-level-text {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #00ffff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 8px #00ffff;
+        }
+
+        /* === SUCCESS STAGE === */
+        .success-stats {
+            background: rgba(0, 255, 0, 0.15); /* Vibrant green rgba */
+            border: 2px solid #00ff00; /* Vibrant green */
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.4), inset 0 0 12px rgba(0, 255, 0, 0.2);
+        }
+
+        .success-stats h3 {
+            color: #00ff00; /* Vibrant green */
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .stat-item {
+            margin: 10px 0;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(0, 255, 0, 0.2); /* Vibrant green rgba */
+            color: #00ffff; /* Consistent cyan */
+            font-size: 1.1rem;
+        }
+
+        .stat-item span {
+            float: right;
+            color: #e0f0f0; /* Off-white */
+            font-weight: bold;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
+        }
+
+        /* === RESPONSIVENESS === */
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            .intro-grid {
+                grid-template-columns: 1fr;
+            }
+            .status-display {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .camera-grid {
+                grid-template-columns: 1fr;
+            }
+            .hack-canvas {
+                width: 95%;
+                max-width: 400px;
+            }
+            .achievements {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .terminal-input-container {
+                flex-direction: column;
+            }
+            .arrow-button {
+                width: 60px; /* Smaller buttons on mobile */
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            .arrow-display {
+                font-size: 6rem; /* Smaller arrow on mobile */
+                height: 120px;
+            }
+            .modal-input-group input {
+                width: 90%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            .game-stage {
+                padding: 20px;
+            }
+            .achievements {
+                grid-template-columns: 1fr;
+            }
+            .title {
+                font-size: 2rem;
+            }
+            .subtitle {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* === ANIMATIONS === */
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 6px currentColor; }
+            50% { box-shadow: 0 0 15px currentColor; }
+        }
+
+        .glow {
+            animation: glow 2s infinite;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .control-buttons {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        /* === TERMS MODAL === */
+        .terms-modal, .admin-modal, .pre-game-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95); /* Even more opaque */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .terms-content, .admin-content, .pre-game-content {
+            background: linear-gradient(135deg, #020205, #080812); /* Darker gradient */
+            border: 2px solid #00ffff; /* Brighter cyan */
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px; /* Wider */
+            max-height: 80vh; /* Taller */
+            overflow-y: auto;
+            color: #00ffff; /* Vibrant cyan */
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.3), inset 0 0 15px rgba(0, 255, 255, 0.1);
+        }
+
+        .terms-title, .modal-title {
+            font-size: 2rem; /* Larger */
+            text-align: center;
+            margin-bottom: 20px;
+            color: #ffaa00; /* Vibrant orange */
+            text-shadow: 0 0 12px #ffaa00; /* Stronger glow */
+        }
+
+        .terms-text, .modal-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #c0c0c0;
+        }
+
+        .terms-text h3, .modal-text h3 {
+            color: #00ff00; /* Vibrant green */
+            margin: 20px 0 10px 0;
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .terms-text p, .modal-text p {
+            margin: 8px 0;
+            color: #a0a0a0;
+        }
+
+        .author-signature {
+            background: rgba(255, 170, 0, 0.1); /* Vibrant orange rgba */
+            border: 1.5px solid #ffaa00; /* Vibrant orange */
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin: 25px 0;
+            font-size: 1.2rem;
+            color: #ffaa00; /* Vibrant orange */
+            text-shadow: 0 0 8px #ffaa00; /* Stronger glow */
+        }
+
+        .terms-buttons, .modal-buttons {
+            text-align: center;
+            margin-top: 25px;
+        }
+        
+        /* Loading/Processing Overlay */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            color: #00ffff;
+            font-size: 2rem;
+            text-shadow: 0 0 10px #00ffff;
+            transition: opacity 0.3s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #loadingOverlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .spinner {
+            border: 8px solid rgba(0, 255, 255, 0.3);
+            border-top: 8px solid #00ffff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            margin-top: 10px;
+            animation: pulse-text 1.5s infinite alternate;
+        }
+
+        @keyframes pulse-text {
+            0% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* Modal specific input styles */
+        .modal-input-group {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .modal-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00ffff;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+        }
+        .modal-input-group input {
+            background: #000;
+            border: 1.5px solid #00ffff;
+            color: #00ff00; /* Green for input text */
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1rem;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+            transition: all 0.2s ease;
+        }
+        .modal-input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.8), inset 0 0 8px rgba(0, 255, 255, 0.3);
+            transform: scale(1.01);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="matrix-bg" id="matrixBg"></div>
+    
+    <!-- Terms of Service Modal -->
+    <div id="termsModal" class="terms-modal">
+        <div class="terms-content">
+            <h2 class="terms-title">REGULAMIN I PRAWA AUTORSKIE</h2>
+            <div class="terms-text">
+                <h3>WARUNKI UŻYTKOWANIA</h3>
+                <p>1. Niniejsza gra jest własnością intelektualną autora i podlega ochronie praw autorskich.</p>
+                <p>2. Użytkownik może korzystać z gry wyłącznie w celach rozrywkowych i edukacyjnych.</p>
+                <p>3. Zabronione jest kopiowanie, modyfikowanie lub rozpowszechnianie kodu bez zgody autora.</p>
+                <p>4. Wszelkie elementy graficzne, dźwiękowe i tekstowe są chronione prawami autorskimi.</p>
+                
+                <h3>PRAWA AUTORSKIE</h3>
+                <p>© 2025 JAPONIEC. Wszelkie prawa zastrzeżone.</p>
+                <p>Kod źródłowy, design, mechaniki gry oraz wszystkie elementy audiowizualne są własnością autora.</p>
+                <p>Wykorzystanie komercyjne bez pisemnej zgody jest zabronione.</p>
+                
+                <h3>ODPOWIEDZIALNOŚĆ</h3>
+                <p>Autor nie ponosi odpowiedzialności za szkody wynikające z użytkowania gry.</p>
+                <p>Gra jest dostarczana "tak jak jest" bez żadnych gwarancji.</p>
+                
+                <div class="author-signature">
+                    <strong>AUTOR: JAPONIEC</strong>
+                </div>
+            </div>
+            <div class="terms-buttons">
+                <button class="cyber-button" onclick="acceptTerms()">AKCEPTUJĘ REGULAMIN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="adminModal" class="admin-modal hidden">
+        <div class="admin-content terms-content">
+            <h2 class="modal-title">PANEL ADMINISTRATORA</h2>
+            <div class="modal-text">
+                <div class="modal-input-group">
+                    <label for="adminPasswordInput">Hasło administratora:</label>
+                    <input type="password" id="adminPasswordInput" placeholder="Wprowadź hasło admina..." autocomplete="off">
+                </div>
+                <div id="adminControls" class="hidden">
+                    <div class="modal-input-group">
+                        <label for="newGamePasswordInput">Ustaw nowe hasło do etapu 1:</label>
+                        <input type="text" id="newGamePasswordInput" placeholder="Nowe hasło Matrix..." autocomplete="off">
+                    </div>
+                    <button class="cyber-button" onclick="setNewGamePassword()">Zapisz nowe hasło</button>
+                    <hr style="margin: 20px 0; border-color: rgba(0, 255, 255, 0.2);">
+                    <div class="modal-input-group">
+                        <label for="newPreGamePasswordInput">Ustaw hasło do pytań wstępnych:</label>
+                        <input type="text" id="newPreGamePasswordInput" placeholder="Nowe hasło wstępne..." autocomplete="off">
+                    </div>
+                    <button class="cyber-button" onclick="setNewPreGamePassword()">Zapisz hasło wstępne</button>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="cyber-button secondary" onclick="closeAdminPanel()">Zamknij</button>
+                <button class="cyber-button" onclick="checkAdminPassword()">Potwierdź Admina</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pre-Game Questions Modal -->
+    <div id="preGameQuestionsModal" class="pre-game-modal hidden">
+        <div class="pre-game-content terms-content">
+            <h2 class="modal-title">WPROWADZENIE DO SYSTEMU</h2>
+            <div class="modal-text">
+                <p>Aby rozpocząć misję, podaj swoje dane:</p>
+                <div class="modal-input-group">
+                    <label for="districtInput">Dystrykt:</label>
+                    <input type="text" id="districtInput" placeholder="Wprowadź dystrykt..." autocomplete="off">
+                </div>
+                <div class="modal-input-group">
+                    <label for="nickInput">Pseudonim:</label>
+                    <input type="text" id="nickInput" placeholder="Wprowadź pseudonim..." autocomplete="off">
+                </div>
+                <div class="modal-input-group">
+                    <label for="preGamePasswordInput">Hasło (do odblokowania):</label>
+                    <input type="password" id="preGamePasswordInput" placeholder="Wprowadź hasło..." autocomplete="off">
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="cyber-button" onclick="submitPreGameQuestions()">Rozpocznij Misję</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Message Box -->
+    <div id="messageBox"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text" id="loadingText">Ładowanie...</div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <a href="#" class="admin-link" onclick="showAdminPanel()">Admin</a>
+            <h1 class="title">CYBER WŁAMANIE</h1>
+            <p class="subtitle">System Hackowania Biżuterii</p>
+            <div class="difficulty-selector">
+                <label for="difficultyLevel">Poziom trudności:</label>
+                <select id="difficultyLevel" class="cyber-select">
+                    <option value="easy">Początkujący</option>
+                    <option value="medium" selected>Średni</option>
+                    <option value="hard">Ekspert</option>
+                </select>
+            </div>
+        </header>
+
+        <!-- Progress Overview -->
+        <div class="progress-overview" id="progressOverview">
+            <div class="overall-progress">
+                <div class="progress-label">Ogólny postęp: <span id="overallProgress">0</span>%</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="overallProgressBar"></div>
+                </div>
+            </div>
+            <div class="achievements">
+                <div class="achievement" id="achievement1">
+                    <span class="achievement-icon">💻</span>
+                    <span class="achievement-text">Matrix Hacker</span>
+                </div>
+                <div class="achievement" id="achievement2">
+                    <span class="achievement-icon">👤</span>
+                    <span class="achievement-text">Biometryk</span>
+                </div>
+                <div class="achievement" id="achievement3">
+                    <span class="achievement-icon">💎</span>
+                    <span class="achievement-text">Laser Expert</span>
+                </div>
+                <div class="achievement" id="achievement4">
+                    <span class="achievement-icon">📹</span>
+                    <span class="achievement-text">CCTV Hacker</span>
+                </div>
+                <div class="achievement" id="achievement5">
+                    <span class="achievement-icon">🚨</span>
+                    <span class="achievement-text">Alarm Ninja</span>
+                </div>
+                <div class="achievement" id="achievement6">
+                    <span class="achievement-icon">⚡</span>
+                    <span class="achievement-text">Terminal Master</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Intro Stage -->
+        <section id="introStage" class="game-stage hidden">
+            <div class="stage-title" style="color: #00ffff;">🔐 WYKRYTO NIEAUTORYZOWANY DOSTĘP 🔐</div>
+            <div class="stage-description">
+                <p>Witaj w systemie hackowania biżuterii.</p>
+                <p>Musisz ukończyć sześć zaawansowanych zabezpieczeń, aby uzyskać dostęp do skarbca:</p>
+                <p>Dystrykt: <span id="displayDistrict"></span> | Pseudonim: <span id="displayNick"></span> | Hasło: <span id="displayPreGamePassword"></span></p>
+            </div>
+            
+            <div class="intro-grid">
+                <div class="challenge-card" data-challenge="1">
+                    <div class="challenge-icon">💻</div>
+                    <h3>ODNALEZIENIE UKRYTEGO HASŁA</h3>
+                    <p>Odszukaj i zapamiętaj ukryte hasło w strumieniu danych</p>
+                    <div class="challenge-status" id="status1">Nieukończone</div>
+                </div>
+                
+                <div class="challenge-card" data-challenge="2">
+                    <div class="challenge-icon">👤</div>
+                    <h3>SKAN BIOMETRYCZNY</h3>
+                    <p>Narysuj odcisk palca do autoryzacji</p>
+                    <div class="challenge-status" id="status2">Nieukończone</div>
+                </div>
+                
+                <div class="challenge-card" data-challenge="3">
+                    <div class="challenge-icon">💎</div>
+                    <h3>SYSTEM LASEROWY</h3>
+                    <p>Nawiguj przez pole laserowe</p>
+                    <div class="challenge-status" id="status3">Nieukończone</div>
+                </div>
+                
+                <div class="challenge-card" data-challenge="4">
+                    <div class="challenge-icon">📹</div>
+                    <h3>HACK KAMER CCTV</h3>
+                    <p>Wyłącz wszystkie kamery monitoringu</p>
+                    <div class="challenge-status" id="status4">Nieukończone</div>
+                </div>
+                
+                <div class="challenge-card" data-challenge="5">
+                    <div class="challenge-icon">🚨</div>
+                    <h3>ODŁĄCZENIE SYGNAŁU ALARMOWEGO</h3>
+                    <p>Dezaktywuj system alarmowy</p>
+                    <div class="challenge-status" id="status5">Nieukończone</div>
+                </div>
+                
+                <div class="challenge-card" data-challenge="6">
+                    <div class="challenge-icon">⚡</div>
+                    <h3>KONSOLA GŁÓWNA</h3>
+                    <p>Wykonaj finalne polecenia</p>
+                    <div class="challenge-status" id="status6">Nieukończone</div>
+                </div>
+            </div>
+            
+            <div class="control-buttons">
+                <button class="cyber-button" onclick="startGame()">Rozpocznij Włamanie</button>
+            </div>
+        </section>
+
+        <!-- Stage 1: Matrix Password -->
+        <section id="stage1" class="game-stage hidden">
+            <div class="stage-title" style="color: #00ff00;">💻 ETAP 1: ODNALEZIENIE UKRYTEGO HASŁA</div>
+            <div class="stage-description">
+                <p>Znajdź i zapamiętaj ukryte hasło w strumieniu danych Matrix.</p>
+                <p>Hasło pojawi się na chwilę, a następnie zniknie. Będziesz miał tylko jedną szansę na jego odnalezienie!</p>
+            </div>
+            
+            <div class="status-display">
+                <div>Próby: <span id="matrixAttempts">3</span></div>
+                <div>Czas: <span id="matrixTime">60</span>s</div>
+                <div>Status: <span id="matrixStatus">Aktywny</span></div>
+            </div>
+            
+            <div class="password-matrix" id="matrixDisplay"></div>
+
+            <div class="password-input-container">
+                <input type="text" id="passwordInput" class="password-input" placeholder="Wpisz hasło tutaj..." autocomplete="off">
+                <button class="cyber-button" onclick="submitPassword()">Potwierdź Hasło</button>
+            </div>
+            
+            <div class="control-buttons">
+                <button class="cyber-button" onclick="resetMatrix()">Reset Matrix</button>
+                <button class="cyber-button secondary" onclick="skipStage(1)">Pomiń Etap</button>
+            </div>
+        </section>
+
+        <!-- Stage 2: Biometric Scan -->
+        <section id="stage2" class="game-stage hidden">
+            <div class="stage-title" style="color: #ffaa00;">👤 ETAP 2: SKAN BIOMETRYCZNY</div>
+            <div class="stage-description">
+                Narysuj wzór odcisku palca na skanerze biometrycznym, aby uzyskać autoryzację.
+            </div>
+            
+            <div class="status-display">
+                <div>Dokładność: <span id="biometricAccuracy">0</span>%</div>
+                <div>Status: <span id="biometricStatus">Oczekuje skanu</span></div>
+            </div>
+            
+            <canvas id="biometricCanvas" class="hack-canvas" width="400" height="300"></canvas>
+            
+            <div class="instructions">
+                <p>Narysuj spiralę od środka na zewnątrz, aby symulować odcisk palca.</p>
+                <p>Użyj myszy lub dotyku, aby narysować wzór.</p>
+            </div>
+            
+            <div class="control-buttons">
+                <button class="cyber-button" onclick="clearBiometric()">Wyczyść</button>
+                <button class="cyber-button" onclick="submitBiometric()">Potwierdź Skan</button>
+                <button class="cyber-button secondary" onclick="skipStage(2)">Pomiń Etap</button>
+            </div>
+        </section>
+
+        <!-- Stage 3: Laser System -->
+        <section id="stage3" class="game-stage hidden">
+            <div class="stage-title" style="color: #ff0000;">💎 ETAP 3: SYSTEM LASEROWY</div>
+            <div class="stage-description">
+                Nawiguj przez pole laserowe, unikając czerwonych wiązek. Dotknij zielonego celu.
+            </div>
+            
+            <div class="status-display">
+                <div>Życia: <span id="laserLives">3</span></div>
+                <div>Czas: <span id="laserTime">45</span>s</div>
+                <div>Status: <span id="laserStatus">Aktywny</span></div>
+            </div>
+            
+            <canvas id="laserCanvas" class="hack-canvas" width="600" height="400"></canvas>
+            
+            <div class="instructions">
+                <p>Użyj <kbd>WASD</kbd> lub strzałek, aby poruszać niebieskim punktem.</p>
+                <p>Unikaj czerwonych laserów i dotrzyj do zielonego celu.</p>
+            </div>
+            
+            <div class="control-buttons">
+                <button class="cyber-button" onclick="resetLaser()">Reset Pozycji</button>
+                <button class="cyber-button secondary" onclick="skipStage(3)">Pomiń Etap</button>
+            </div>
+        </section>
+
+        <!-- Stage 4: CCTV Hack -->
+        <section id="stage4" class="game-stage hidden">
+            <div class="stage-title" style="color: #ffff00;">📹 ETAP 4: HACK KAMER CCTV</div>
+            <div class="stage-description">
+                Wyłącz wszystkie kamery monitoringu, klikając na nie w odpowiedniej kolejności.
+            </div>
+            
+            <div class="status-display">
+                <div>Kamery aktywne: <span id="activeCameras">4</span></div>
+                <div>Sekwencja: <span id="cameraSequence">--</span></div>
+                <div>Status: <span id="cameraStatus">Monitoring aktywny</span></div>
+            </div>
+            
+            <div class="camera-grid">
+                <div class="camera-monitor" id="camera1">
+                    <div class="camera-feed">
+                        <h4>Kamera 1</h4>
+                        <div class="camera-indicator active" id="indicator1">🔴 AKTYWNA</div>
+                        <button class="cyber-button" onclick="toggleCamera(1)">Hack Kamerę</button>
+                    </div>
+                </div>
+                <div class="camera-monitor" id="camera2">
+                    <div class="camera-feed">
+                        <h4>Kamera 2</h4>
+                        <div class="camera-indicator active" id="indicator2">🔴 AKTYWNA</div>
+                        <button class="cyber-button" onclick="toggleCamera(2)">Hack Kamerę</button>
+                    </div>
+                </div>
+                <div class="camera-monitor" id="camera3">
+                    <div class="camera-feed">
+                        <h4>Kamera 3</h4>
+                        <div class="camera-indicator active" id="indicator3">🔴 AKTYWNA</div>
+                        <button class="cyber-button" onclick="toggleCamera(3)">Hack Kamerę</button>
+                    </div>
+                </div>
+                <div class="camera-monitor" id="camera4">
+                    <div class="camera-feed">
+                        <h4>Kamera 4</h4>
+                        <div class="camera-indicator active" id="indicator4">🔴 AKTYWNA</div>
+                        <button class="cyber-button" onclick="toggleCamera(4)">Hack Kamerę</button>
+                    </div>
+                </div>
+            </div>
+            <div class="instructions">
+                <p>Kamery muszą być wyłączone w odpowiedniej kolejności: 3 → 1 → 4 → 2</p>
+            </div>
+            <div class="control-buttons">
+                <button class="cyber-button" onclick="resetCameras()">Reset Kamer</button>
+                <button class="cyber-button secondary" onclick="skipStage(4)">Pomiń Etap</button>
+            </div>
+        </section>
+
+        <!-- Stage 5: Arrow Sequence Game -->
+        <section id="stage5" class="game-stage hidden">
+            <div class="stage-title" style="color: #ff00ff;">🚨 ETAP 5: WZÓR DEZAKTYWACJI ALARMU</div>
+            <div class="stage-description">
+                <p>Odwzoruj sekwencję strzałek, aby dezaktywować system alarmowy.</p>
+                <p>Masz 5 poziomów do ukończenia.</p>
+            </div>
+            
+            <div class="status-display">
+                <div>Poziom: <span id="arrowCurrentLevel">1</span>/5</div>
+                <div>Status: <span id="arrowGameStatus">Oczekuje wzoru</span></div>
+            </div>
+
+            <div class="arrow-display" id="currentArrowDisplay"></div>
+            <div class="arrow-level-text" id="arrowLevelText">Poziom 1</div>
+
+            <div class="arrow-input-container">
+                <button class="arrow-button" onclick="submitArrow('up')">⬆️</button>
+                <button class="arrow-button" onclick="submitArrow('down')">⬇️</button>
+                <button class="arrow-button" onclick="submitArrow('left')">⬅️</button>
+                <button class="arrow-button" onclick="submitArrow('right')">➡️</button>
+            </div>
+            
+            <div class="instructions">
+                <p>Użyj przycisków strzałek, aby odwzorować wyświetlony wzór.</p>
+            </div>
+
+            <div class="control-buttons">
+                <button class="cyber-button" onclick="resetArrowGame()">Reset Etapu</button>
+                <button class="cyber-button secondary" onclick="skipStage(5)">Pomiń Etap</button>
+            </div>
+        </section>
+
+        <!-- Stage 6: Terminal -->
+        <section id="stage6" class="game-stage hidden">
+            <div class="stage-title" style="color: #00ffff;">⚡ ETAP 6: KONSOLA GŁÓWNA</div>
+            <div class="stage-description">
+                Wykonaj polecenia w terminalu, aby uzyskać pełny dostęp do systemu.
+            </div>
+            
+            <div class="status-display">
+                <div>Polecenia: <span id="terminalCommands">0</span>/5</div>
+                <div>Root Access: <span id="rootAccess">NIE</span></div>
+                <div>Status: <span id="terminalStatus">Oczekuje poleceń</span></div>
+            </div>
+            
+            <div class="terminal-display" id="terminalOutput">
+                <div class="terminal-line">root@security-system:~# <span class="cursor">_</span></div>
+            </div>
+            <div class="terminal-input-container">
+                <input type="text" id="terminalInput" class="terminal-input" placeholder="Wprowadź polecenie..." autocomplete="off">
+                <button class="cyber-button" onclick="executeCommand()">Wykonaj</button>
+            </div>
+            <div class="instructions">
+                <p>Dostępne polecenia: <code>ls</code>, <code>cat vault.key</code>, <code>sudo override</code>, <code>unlock vault</code>, <code>exit</code></p>
+            </div>
+            <div class="control-buttons">
+                <button class="cyber-button" onclick="clearTerminal()">Wyczyść Terminal</button>
+                <button class="cyber-button secondary" onclick="skipStage(6)">Pomiń Etap</button>
+            </div>
+        </section>
+
+        <!-- Success Stage -->
+        <section id="successStage" class="game-stage hidden">
+            <div class="stage-title" style="color: #00ff00;">🎉 MISJA UKOŃCZONA! 🎉</div>
+            <div class="stage-description">
+                <p>Gratulacje! Pomyślnie zhakowano wszystkie zabezpieczenia skarbca.</p>
+                <p>Biżuteria została przejęta przez twój zespół hakerów!</p>
+            </div>
+            <div class="success-stats">
+                <h3>Statystyki Misji</h3>
+                <div class="stat-item">
+                    Poziom trudności: <span id="finalDifficulty">--</span>
+                </div>
+                <div class="stat-item">
+                    Łączny czas: <span id="totalTime">--:--</span>
+                </div>
+                <div class="stat-item">
+                    Osiągnięcia: <span id="achievementCount">0/6</span>
+                </div>
+            </div>
+            <div class="control-buttons">
+                <button class="cyber-button" onclick="restartGame()">Nowa Misja</button>
+                <button class="cyber-button secondary" onclick="goToIntro()">Menu Główne</button>
+            </div>
+            <div class="author-signature" style="margin-top: 30px;">
+                <strong>AUTOR: JAPONIEC</strong>
+            </div>
+        </section>
+    </div>
+    <script>
+        // === GLOBAL GAME STATE VARIABLES ===
+        let gameState = {
+            currentStage: 0,
+            completedStages: [],
+            difficulty: 'medium',
+            startTime: null,
+            achievements: [],
+            totalTime: 0,
+            playerDistrict: '',
+            playerNick: '',
+            playerPreGamePassword: ''
+        };
+
+        // This variable holds the correct pre-game password, can be changed by admin
+        let correctPreGamePassword = 'cyberhaslo'; // Default initial password
+
+        // === STAGE-SPECIFIC VARIABLES ===
+        let matrixGame = {
+            lines: [],
+            passwordLine: '', // Now stores the actual password string, can be set by admin
+            attempts: 3,
+            timeLeft: 60,
+            timer: null,
+            isActive: false,
+            passwordHidden: false // New flag for hiding password
+        };
+
+        let biometricGame = {
+            canvas: null,
+            ctx: null,
+            isDrawing: false,
+            paths: [],
+            accuracy: 0
+        };
+
+        let laserGame = {
+            canvas: null,
+            ctx: null,
+            player: { x: 50, y: 350 },
+            target: { x: 550, y: 50 },
+            lasers: [],
+            lives: 3,
+            timeLeft: 45,
+            timer: null,
+            isActive: false,
+            laserPositions: [] // Stores fixed positions for static lasers
+        };
+
+        let cameraGame = {
+            sequence: [3, 1, 4, 2],
+            currentStep: 0,
+            cameras: [1, 2, 3, 4],
+            hackedCameras: []
+        };
+
+        let arrowGame = { // New variable for the arrow sequence game (Stage 5)
+            currentLevel: 1,
+            levels: [
+                { sequence: ['up', 'right'], display: ['⬆️', '➡️'] },
+                { sequence: ['down', 'left', 'up'], display: ['⬇️', '⬅️', '⬆️'] },
+                { sequence: ['up', 'up', 'down', 'down'], display: ['⬆️', '⬆️', '⬇️', '⬇️'] },
+                { sequence: ['left', 'right', 'up', 'down', 'left'], display: ['⬅️', '➡️', '⬆️', '⬇️', '⬅️'] },
+                { sequence: ['down', 'up', 'left', 'right', 'down', 'up'], display: ['⬇️', '⬆️', '⬅️', '➡️', '⬇️', '⬆️'] }
+            ],
+            currentSequence: [],
+            playerInputSequence: [],
+            displayTimeout: null,
+            inputAllowed: false
+        };
+
+        let terminalGame = {
+            commands: [],
+            requiredCommands: ['ls', 'cat vault.key', 'sudo override', 'unlock vault', 'exit'],
+            currentCommand: 0,
+            output: []
+        };
+
+        // === ADMIN PANEL VARIABLES ===
+        const ADMIN_TRUE_PASSWORD = 'hekarimq';
+
+        // === INITIAL GAME SETUP ===
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeGame();
+            setupEventListeners();
+        });
+
+        function initializeGame() {
+            console.log('Inicjalizacja gry...');
+            // Reset game state
+            gameState = {
+                currentStage: 0,
+                completedStages: [],
+                difficulty: document.getElementById('difficultyLevel').value,
+                startTime: null,
+                achievements: [],
+                totalTime: 0,
+                playerDistrict: '',
+                playerNick: '',
+                playerPreGamePassword: ''
+            };
+            // Update UI
+            updateProgressDisplay();
+            showStage('preGameQuestionsModal'); // Start with pre-game questions
+            // Set up difficulty settings
+            setupDifficultySettings();
+            console.log('Gra zainicjalizowana.');
+        }
+
+        function setupEventListeners() {
+            // Difficulty selector
+            document.getElementById('difficultyLevel').addEventListener('change', function(e) {
+                gameState.difficulty = e.target.value;
+                setupDifficultySettings();
+                console.log('Zmieniono poziom trudności na:', gameState.difficulty);
+            });
+            
+            // Terminal input (for Stage 6)
+            const terminalInput = document.getElementById('terminalInput');
+            if (terminalInput) {
+                terminalInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        executeCommand();
+                    }
+                });
+            }
+
+            // Password input (for Stage 1)
+            const passwordInput = document.getElementById('passwordInput');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        submitPassword();
+                    }
+                });
+            }
+
+            // Admin password input
+            const adminPasswordInput = document.getElementById('adminPasswordInput');
+            if (adminPasswordInput) {
+                adminPasswordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        checkAdminPassword();
+                    }
+                });
+            }
+
+            // New game password input
+            const newGamePasswordInput = document.getElementById('newGamePasswordInput');
+            if (newGamePasswordInput) {
+                newGamePasswordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        setNewGamePassword();
+                    }
+                });
+            }
+
+            // New pre-game password input for admin panel
+            const newPreGamePasswordInput = document.getElementById('newPreGamePasswordInput');
+            if (newPreGamePasswordInput) {
+                newPreGamePasswordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        setNewPreGamePassword();
+                    }
+                });
+            }
+
+
+            // Pre-game questions inputs
+            const preGamePasswordInput = document.getElementById('preGamePasswordInput');
+            if (preGamePasswordInput) {
+                preGamePasswordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        submitPreGameQuestions();
+                    }
+                });
+            }
+
+            // Canvas for biometric scan (Stage 2)
+            initializeBiometricCanvas();
+            
+            // Canvas for laser system (Stage 3)
+            initializeLaserCanvas();
+        }
+
+        function setupDifficultySettings() {
+            const difficulty = gameState.difficulty;
+            
+            switch(difficulty) {
+                case 'easy':
+                    matrixGame.attempts = 5;
+                    matrixGame.timeLeft = 90;
+                    laserGame.lives = 5;
+                    laserGame.timeLeft = 60;
+                    // Alarm game levels for easy: shorter sequences
+                    arrowGame.levels = [
+                        { sequence: ['up', 'right'], display: ['⬆️', '➡️'] },
+                        { sequence: ['down', 'left', 'up'], display: ['⬇️', '⬅️', '⬆️'] },
+                        { sequence: ['up', 'up', 'down', 'down'], display: ['⬆️', '⬆️', '⬇️', '⬇️'] },
+                        { sequence: ['left', 'right', 'up', 'down', 'left'], display: ['⬅️', '➡️', '⬆️', '⬇️', '⬅️'] },
+                        { sequence: ['down', 'up', 'left', 'right', 'down', 'up'], display: ['⬇️', '⬆️', '⬅️', '➡️', '⬇️', '⬆️'] }
+                    ];
+                    break;
+                case 'medium':
+                    matrixGame.attempts = 3;
+                    matrixGame.timeLeft = 60;
+                    laserGame.lives = 3;
+                    laserGame.timeLeft = 45;
+                     // Alarm game levels for medium
+                     arrowGame.levels = [
+                        { sequence: ['up', 'down', 'left'], display: ['⬆️', '⬇️', '⬅️'] },
+                        { sequence: ['right', 'up', 'left', 'down'], display: ['➡️', '⬆️', '⬅️', '⬇️'] },
+                        { sequence: ['up', 'right', 'down', 'left', 'up'], display: ['⬆️', '➡️', '⬇️', '⬅️', '⬆️'] },
+                        { sequence: ['down', 'down', 'left', 'right', 'up', 'up'], display: ['⬇️', '⬇️', '⬅️', '➡️', '⬆️', '⬆️'] },
+                        { sequence: ['up', 'left', 'down', 'right', 'up', 'left', 'down'], display: ['⬆️', '⬅️', '⬇️', '➡️', '⬆️', '⬅️', '⬇️'] }
+                    ];
+                    break;
+                case 'hard':
+                    matrixGame.attempts = 2;
+                    matrixGame.timeLeft = 45;
+                    laserGame.lives = 2;
+                    laserGame.timeLeft = 30;
+                    // Alarm game levels for hard: longer sequences
+                    arrowGame.levels = [
+                        { sequence: ['up', 'left', 'down', 'right'], display: ['⬆️', '⬅️', '⬇️', '➡️'] },
+                        { sequence: ['right', 'down', 'left', 'up', 'right'], display: ['➡️', '⬇️', '⬅️', '⬆️', '➡️'] },
+                        { sequence: ['up', 'up', 'right', 'right', 'down', 'down', 'left', 'left'], display: ['⬆️', '⬆️', '➡️', '➡️', '⬇️', '⬇️', '⬅️', '⬅️'] },
+                        { sequence: ['left', 'down', 'right', 'up', 'left', 'down', 'right'], display: ['⬅️', '⬇️', '➡️', '⬆️', '⬅️', '⬇️', '➡️'] },
+                        { sequence: ['up', 'up', 'left', 'left', 'down', 'down', 'right', 'right', 'up'], display: ['⬆️', '⬆️', '⬅️', '⬅️', '⬇️', '⬇️', '➡️', '➡️', '⬆️'] }
+                    ];
+                    break;
+            }
+        }
+
+        // === STAGE MANAGEMENT ===
+        function showStage(stageId) {
+            // Hide all main game stages
+            document.querySelectorAll('.game-stage').forEach(stage => {
+                stage.classList.add('hidden');
+            });
+            // Hide all modals
+            document.querySelectorAll('.terms-modal, .admin-modal, .pre-game-modal').forEach(modal => {
+                modal.classList.add('hidden');
+            });
+
+            // Show selected stage or modal
+            document.getElementById(stageId).classList.remove('hidden');
+            console.log('Pokazano etap/modal:', stageId);
+        }
+
+        // Renamed function for clarity
+        function startMainGame() {
+            console.log('Rozpoczynanie głównej gry...');
+            gameState.startTime = Date.now();
+            gameState.currentStage = 1;
+            startStage1();
+            updateProgressDisplay();
+            // Display player data on intro stage
+            document.getElementById('displayDistrict').textContent = gameState.playerDistrict;
+            document.getElementById('displayNick').textContent = gameState.playerNick;
+            document.getElementById('displayPreGamePassword').textContent = gameState.playerPreGamePassword.replace(/./g, '*'); // Mask password
+        }
+
+        function startGame() {
+             // This function is now only called from the introStage.
+             // The actual game start logic is in startMainGame after pre-game questions.
+             // This button can simply trigger the first stage.
+            console.log('Start Game button clicked from Intro Stage');
+            gameState.currentStage = 1;
+            startStage1();
+        }
+
+
+        function skipStage(stageNumber) {
+            console.log('Pomijanie etapu:', stageNumber);
+            completeStage(stageNumber);
+        }
+
+        function completeStage(stageNumber) {
+            if (!gameState.completedStages.includes(stageNumber)) {
+                gameState.completedStages.push(stageNumber);
+                
+                // Update challenge status in intro screen
+                const statusElement = document.getElementById(`status${stageNumber}`);
+                if (statusElement) {
+                    statusElement.textContent = 'Ukończone';
+                    statusElement.classList.add('completed');
+                }
+                
+                // Unlock achievement
+                unlockAchievement(stageNumber);
+                
+                // Update overall progress
+                updateProgressDisplay();
+                
+                console.log('Ukończono etap:', stageNumber);
+            }
+            
+            // Move to the next stage
+            const nextStage = stageNumber + 1;
+            if (nextStage <= 6) {
+                gameState.currentStage = nextStage;
+                showLoadingOverlay(`Ładowanie Etapu ${nextStage}...`);
+                setTimeout(() => {
+                    hideLoadingOverlay();
+                    switch(nextStage) {
+                        case 2: startStage2(); break;
+                        case 3: startStage3(); break;
+                        case 4: startStage4(); break;
+                        case 5: startStage5(); break;
+                        case 6: startStage6(); break;
+                        default: completeGame(); break; // Should not happen if stages are 1-6
+                    }
+                }, 1500); // Short delay for transition and loading effect
+            } else {
+                completeGame();
+            }
+        }
+
+        // === PRE-GAME QUESTIONS LOGIC ===
+        function startPreGameQuestions() {
+            showStage('preGameQuestionsModal');
+            document.getElementById('districtInput').value = '';
+            document.getElementById('nickInput').value = '';
+            document.getElementById('preGamePasswordInput').value = '';
+        }
+
+        function submitPreGameQuestions() {
+            const district = document.getElementById('districtInput').value.trim();
+            const nick = document.getElementById('nickInput').value.trim();
+            const preGamePassword = document.getElementById('preGamePasswordInput').value.trim();
+
+            if (!district || !nick || !preGamePassword) {
+                showMessageBox('Wypełnij wszystkie pola!', 'error');
+                return;
+            }
+
+            if (preGamePassword !== correctPreGamePassword) {
+                showMessageBox('Nieprawidłowe hasło! System zablokowany.', 'error');
+                setTimeout(() => window.close(), 2000); // Close the window
+                return;
+            }
+
+            gameState.playerDistrict = district;
+            gameState.playerNick = nick;
+            gameState.playerPreGamePassword = preGamePassword;
+
+            showMessageBox('Dane zapisane! Przygotuj się do misji.', 'success');
+            showStage('introStage'); // Move to the intro screen after questions
+            console.log('Dane gracza:', gameState.playerDistrict, gameState.playerNick, gameState.playerPreGamePassword);
+
+            // Update display in intro stage immediately
+            document.getElementById('displayDistrict').textContent = gameState.playerDistrict;
+            document.getElementById('displayNick').textContent = gameState.playerNick;
+            document.getElementById('displayPreGamePassword').textContent = gameState.playerPreGamePassword.replace(/./g, '*'); // Mask password
+        }
+
+        // === ADMIN PANEL LOGIC ===
+        function showAdminPanel() {
+            showStage('adminModal');
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('adminControls').classList.add('hidden');
+            document.getElementById('newGamePasswordInput').value = '';
+            document.getElementById('newPreGamePasswordInput').value = '';
+        }
+
+        function checkAdminPassword() {
+            const inputPassword = document.getElementById('adminPasswordInput').value;
+            if (inputPassword === ADMIN_TRUE_PASSWORD) {
+                document.getElementById('adminControls').classList.remove('hidden');
+                showMessageBox('Dostęp administratora przyznany!', 'success');
+            } else {
+                showMessageBox('Nieprawidłowe hasło administratora.', 'error');
+                document.getElementById('adminControls').classList.add('hidden');
+            }
+        }
+
+        function setNewGamePassword() {
+            const newPass = document.getElementById('newGamePasswordInput').value.trim();
+            if (newPass) {
+                matrixGame.passwordLine = newPass; // Update the password for Stage 1
+                showMessageBox(`Nowe hasło Matrix ustawione na: "${newPass}"`, 'success');
+                console.log('Nowe hasło Matrix ustawione przez admina:', matrixGame.passwordLine);
+                closeAdminPanel();
+            } else {
+                showMessageBox('Hasło nie może być puste!', 'error');
+            }
+        }
+
+        function setNewPreGamePassword() {
+            const newPass = document.getElementById('newPreGamePasswordInput').value.trim();
+            if (newPass) {
+                correctPreGamePassword = newPass;
+                showMessageBox(`Nowe hasło wstępne ustawione na: "${newPass}"`, 'success');
+                console.log('Nowe hasło wstępne ustawione przez admina:', correctPreGamePassword);
+                closeAdminPanel();
+            } else {
+                showMessageBox('Hasło nie może być puste!', 'error');
+            }
+        }
+
+
+        function closeAdminPanel() {
+            document.getElementById('adminModal').classList.add('hidden');
+        }
+
+        // === STAGE 1: FIND HIDDEN PASSWORD ===
+        function startStage1() {
+            console.log('Rozpoczynanie etapu 1: Odnalezienie ukrytego hasła');
+            showStage('stage1');
+            
+            matrixGame.attempts = getDifficultySetting('matrixAttempts');
+            matrixGame.timeLeft = getDifficultySetting('matrixTime');
+            matrixGame.isActive = true;
+            matrixGame.passwordHidden = false; // Password starts visible
+
+            document.getElementById('matrixAttempts').textContent = matrixGame.attempts;
+            document.getElementById('matrixTime').textContent = matrixGame.timeLeft;
+            document.getElementById('matrixStatus').textContent = 'Aktywny';
+            document.getElementById('passwordInput').value = ''; // Clear input
+
+            generateMatrixDisplay();
+            startMatrixTimer();
+            document.getElementById('passwordInput').focus();
+        }
+
+        function generateMatrixDisplay() {
+            const matrixDisplay = document.getElementById('matrixDisplay');
+            matrixDisplay.innerHTML = '';
+            matrixGame.lines = [];
+            
+            const commonLines = [
+                'SYSTEM INICJALIZACJA... ŁADOWANIE DANYCH...',
+                'SPRAWDZANIE ZABEZPIECZEŃ SYSTEMOWYCH...',
+                'STATUS FIREWALLA: AKTYWNY | WERSJA 3.1.2',
+                'KODOWANIE SESJI: AES-256 | WERYFIKACJA OK',
+                'BŁĄD DANYCH: SEKTOR 0x4F8A | NAPRAWA W TOKU...',
+                'MODUŁ MONITORINGU: ONLINE | KANALIZOWANIE...',
+                'ARCHIWIZACJA DANYCH: ZAKOŃCZONA POMYŚLNIE.',
+                'TRYB AWARYJNY: DEZAKTYWOWANY | CZEKANIE...'
+            ];
+            
+            // If admin set a password, use it. Otherwise, generate a new one.
+            if (!matrixGame.passwordLine) {
+                const passwordChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+                let generatedPassword = '';
+                const passwordLength = 8; // Fixed password length
+                for (let i = 0; i < passwordLength; i++) {
+                    generatedPassword += passwordChars.charAt(Math.floor(Math.random() * passwordChars.length));
+                }
+                matrixGame.passwordLine = generatedPassword; // Store the generated password
+            }
+
+            const allLines = [...commonLines];
+            const passwordLineText = `[HASŁO]: ${matrixGame.passwordLine} | ZAPAMIĘTAJ!`;
+            const randomPosition = Math.floor(Math.random() * (commonLines.length - 2)) + 1; // Insert randomly
+            allLines.splice(randomPosition, 0, passwordLineText);
+
+            allLines.forEach((lineText, index) => {
+                const div = document.createElement('div');
+                div.className = 'matrix-line';
+                if (lineText === passwordLineText) {
+                    div.classList.add('password');
+                }
+                div.textContent = lineText;
+                matrixDisplay.appendChild(div);
+                matrixGame.lines.push({ element: div, isPasswordLine: (lineText === passwordLineText) });
+            });
+
+            // Hide the password after a few seconds
+            setTimeout(() => {
+                const passwordLineDiv = matrixGame.lines.find(l => l.isPasswordLine)?.element;
+                if (passwordLineDiv) {
+                    passwordLineDiv.textContent = '****************************************'; // Replace with asterisks
+                    passwordLineDiv.classList.remove('password'); // Remove highlighting
+                    matrixGame.passwordHidden = true;
+                    showMessageBox('Hasło zostało ukryte! Wpisz je.', 'info');
+                }
+            }, 5000); // Password visible for 5 seconds
+        }
+
+        function startMatrixTimer() {
+            if (matrixGame.timer) clearInterval(matrixGame.timer);
+            matrixGame.timer = setInterval(() => {
+                matrixGame.timeLeft--;
+                document.getElementById('matrixTime').textContent = matrixGame.timeLeft;
+                
+                if (matrixGame.timeLeft <= 0) {
+                    clearInterval(matrixGame.timer);
+                    matrixGame.isActive = false;
+                    document.getElementById('matrixStatus').textContent = 'Czas minął!';
+                    failMatrixStage('Czas minął! Nie udało się odnaleźć hasła.');
+                }
+            }, 1000);
+        }
+
+        function submitPassword() {
+            if (!matrixGame.isActive) return;
+
+            const inputElement = document.getElementById('passwordInput');
+            const enteredPassword = inputElement.value.trim();
+
+            if (enteredPassword === matrixGame.passwordLine) {
+                clearInterval(matrixGame.timer);
+                matrixGame.isActive = false;
+                document.getElementById('matrixStatus').textContent = 'Hasło poprawne!';
+                showMessageBox('Hasło poprawne! Etap ukończony.', 'success');
+                setTimeout(() => completeStage(1), 1000);
+            } else {
+                matrixGame.attempts--;
+                document.getElementById('matrixAttempts').textContent = matrixGame.attempts;
+                showMessageBox(`Nieprawidłowe hasło! Pozostało prób: ${matrixGame.attempts}`, 'error');
+                inputElement.value = ''; // Clear input for next attempt
+                inputElement.focus();
+
+                if (matrixGame.attempts <= 0) {
+                    clearInterval(matrixGame.timer);
+                    matrixGame.isActive = false;
+                    document.getElementById('matrixStatus').textContent = 'Błąd!';
+                    failMatrixStage('Brak prób! Hasło nieprawidłowe.');
+                }
+            }
+        }
+
+        function failMatrixStage(message) {
+            showMessageBox(message, 'error');
+            setTimeout(() => resetMatrix(), 1500); // Reset after a short delay
+        }
+
+        function resetMatrix() {
+            clearInterval(matrixGame.timer);
+            matrixGame.isActive = false;
+            // Clear the passwordLine so a new one is generated (or admin-set)
+            matrixGame.passwordLine = ''; 
+            // Re-initialize for a fresh start
+            setTimeout(() => startStage1(), 1000);
+        }
+
+        // === STAGE 2: BIOMETRIC SCAN ===
+        function initializeBiometricCanvas() {
+            biometricGame.canvas = document.getElementById('biometricCanvas');
+            if (!biometricGame.canvas) return;
+            
+            biometricGame.ctx = biometricGame.canvas.getContext('2d');
+            biometricGame.ctx.strokeStyle = '#00ff00'; /* Vibrant green */
+            biometricGame.ctx.lineWidth = 4; /* Thicker line */
+            biometricGame.ctx.lineCap = 'round';
+            biometricGame.ctx.lineJoin = 'round';
+
+            // Event listeners for drawing
+            biometricGame.canvas.addEventListener('mousedown', startDrawing);
+            biometricGame.canvas.addEventListener('mousemove', draw);
+            biometricGame.canvas.addEventListener('mouseup', stopDrawing);
+            biometricGame.canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch events for mobile devices
+            biometricGame.canvas.addEventListener('touchstart', handleTouchStart);
+            biometricGame.canvas.addEventListener('touchmove', handleTouchMove);
+            biometricGame.canvas.addEventListener('touchend', stopDrawing);
+            biometricGame.canvas.addEventListener('touchcancel', stopDrawing);
+            
+            clearBiometric(); // Initial clear
+        }
+
+        function startStage2() {
+            console.log('Rozpoczynanie etapu 2: Skan Biometryczny');
+            showStage('stage2');
+            biometricGame.accuracy = 0;
+            document.getElementById('biometricAccuracy').textContent = '0';
+            document.getElementById('biometricStatus').textContent = 'Oczekuje skanu';
+            clearBiometric(); // Clears canvas and resets game variables
+        }
+
+        function startDrawing(e) {
+            biometricGame.isDrawing = true;
+            biometricGame.paths.push([]); // Start a new path
+            const rect = biometricGame.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            biometricGame.ctx.beginPath();
+            biometricGame.ctx.moveTo(x, y);
+            biometricGame.paths[biometricGame.paths.length - 1].push({ x, y });
+        }
+
+        function draw(e) {
+            if (!biometricGame.isDrawing) return;
+            
+            const rect = biometricGame.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            biometricGame.ctx.lineTo(x, y);
+            biometricGame.ctx.stroke();
+            
+            biometricGame.paths[biometricGame.paths.length - 1].push({ x, y });
+        }
+
+        function stopDrawing() {
+            biometricGame.isDrawing = false;
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault(); // Prevent scrolling
+            const touch = e.touches[0];
+            startDrawing(touch);
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault(); // Prevent scrolling
+            const touch = e.touches[0];
+            draw(touch);
+        }
+
+        function clearBiometric() {
+            if (!biometricGame.ctx) return;
+            
+            biometricGame.ctx.clearRect(0, 0, biometricGame.canvas.width, biometricGame.canvas.height);
+            biometricGame.paths = [];
+            biometricGame.accuracy = 0;
+            
+            // Draw a faint reference grid (concentric circles for spiral guidance)
+            biometricGame.ctx.strokeStyle = 'rgba(0, 255, 255, 0.2)'; /* Faint cyan */
+            biometricGame.ctx.lineWidth = 1.5;
+            const centerX = biometricGame.canvas.width / 2;
+            const centerY = biometricGame.canvas.height / 2;
+            for (let r = 30; r <= 150; r += 30) {
+                biometricGame.ctx.beginPath();
+                biometricGame.ctx.arc(centerX, centerY, r, 0, 2 * Math.PI);
+                biometricGame.ctx.stroke();
+            }
+            
+            document.getElementById('biometricAccuracy').textContent = biometricGame.accuracy;
+            document.getElementById('biometricStatus').textContent = 'Oczekuje skanu';
+        }
+
+        function submitBiometric() {
+            if (biometricGame.paths.length === 0 || biometricGame.paths[0].length < 50) {
+                showMessageBox('Skan jest zbyt krótki! Narysuj pełniejszy wzór.', 'error');
+                document.getElementById('biometricStatus').textContent = 'Skan zbyt krótki!';
+                return;
+            }
+
+            // Simple accuracy check: drawing length and overall spread
+            let totalLength = 0;
+            let minX = biometricGame.canvas.width, maxX = 0;
+            let minY = biometricGame.canvas.height, maxY = 0;
+
+            for (const path of biometricGame.paths) {
+                for (let i = 1; i < path.length; i++) {
+                    const p1 = path[i - 1];
+                    const p2 = path[i];
+                    totalLength += Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
+                    minX = Math.min(minX, p1.x, p2.x);
+                    maxX = Math.max(maxX, p1.x, p2.x);
+                    minY = Math.min(minY, p1.y, p2.y);
+                    maxY = Math.max(maxY, p1.y, p2.y);
+                }
+            }
+
+            const drawnWidth = maxX - minX;
+            const drawnHeight = maxY - minY;
+
+            // Define "ideal" characteristics for a good scan
+            const idealMinLength = 300; // Minimum total path length
+            const idealMinWidth = biometricGame.canvas.width * 0.5; // Minimum width coverage
+            const idealMinHeight = biometricGame.canvas.height * 0.5; // Minimum height coverage
+
+            let accuracyScore = 0;
+            if (totalLength >= idealMinLength) accuracyScore += 40;
+            if (drawnWidth >= idealMinWidth) accuracyScore += 30;
+            if (drawnHeight >= idealMinHeight) accuracyScore += 30;
+
+            biometricGame.accuracy = Math.min(100, Math.round(accuracyScore));
+            document.getElementById('biometricAccuracy').textContent = biometricGame.accuracy;
+
+            if (biometricGame.accuracy >= 70) {
+                document.getElementById('biometricStatus').textContent = 'Skan zaakceptowany!';
+                showMessageBox('Autoryzacja biometryczna pomyślna!', 'success');
+                setTimeout(() => completeStage(2), 1000);
+            } else {
+                document.getElementById('biometricStatus').textContent = 'Skan odrzucony! Spróbuj ponownie.';
+                showMessageBox('Niedostateczna dokładność skanu. Spróbuj ponownie.', 'error');
+                clearBiometric(); // Clear for another attempt
+            }
+        }
+
+
+        // === STAGE 3: LASER SYSTEM ===
+        function resetLaserPlayerPosition() {
+            laserGame.player = { x: 50, y: laserGame.canvas.height - 50 };
+        }
+
+        function initializeLaserCanvas() {
+            laserGame.canvas = document.getElementById('laserCanvas');
+            if (!laserGame.canvas) return;
+            
+            laserGame.ctx = laserGame.canvas.getContext('2d');
+            // Ensure canvas size adapts to container
+            const containerWidth = laserGame.canvas.parentElement.clientWidth;
+            laserGame.canvas.width = Math.min(600, containerWidth - 40); // Cap at 600px, responsive
+            laserGame.canvas.height = laserGame.canvas.width * (3/4); // Maintain aspect ratio
+
+            // Reset player and target positions based on new canvas size
+            laserGame.player = { x: 50, y: laserGame.canvas.height - 50 };
+            laserGame.target = { x: laserGame.canvas.width - 50, y: 50 };
+            
+            // Initialize static laser positions once
+            setupStaticLasers(); 
+        }
+
+        function setupStaticLasers() {
+            laserGame.laserPositions = [];
+            const numLasers = gameState.difficulty === 'easy' ? 4 : gameState.difficulty === 'medium' ? 6 : 8;
+            
+            // Define a few fixed static laser patterns for variety and challenge
+            const patterns = [
+                // Pattern 1: Horizontal lines
+                [
+                    { x1: 0, y1: 100, x2: 400, y2: 100 },
+                    { x1: 200, y1: 200, x2: 600, y2: 200 },
+                    { x1: 0, y1: 300, x2: 400, y2: 300 }
+                ],
+                // Pattern 2: Vertical lines
+                [
+                    { x1: 100, y1: 0, x2: 100, y2: 300 },
+                    { x1: 300, y1: 100, x2: 300, y2: 400 },
+                    { x1: 500, y1: 0, x2: 500, y2: 300 }
+                ],
+                // Pattern 3: Diagonal cross
+                [
+                    { x1: 50, y1: 50, x2: 550, y2: 350 },
+                    { x1: 550, y1: 50, x2: 50, y2: 350 }
+                ],
+                // Pattern 4: Mixed
+                [
+                    { x1: 50, y1: 150, x2: 400, y2: 150 },
+                    { x1: 200, y1: 0, x2: 200, y2: 250 },
+                    { x1: 300, y1: 250, x2: 550, y2: 350 }
+                ]
+            ];
+
+            // Select a random pattern, ensuring it fits the number of lasers for difficulty
+            let selectedPattern = patterns[Math.floor(Math.random() * patterns.length)];
+            // Trim or extend pattern to match numLasers for current difficulty
+            while (selectedPattern.length > numLasers) {
+                selectedPattern.pop();
+            }
+            while (selectedPattern.length < numLasers && patterns.length > 0) {
+                 // Add a random laser if current pattern is too short
+                const newLaser = {
+                    x1: Math.random() * laserGame.canvas.width,
+                    y1: Math.random() * laserGame.canvas.height,
+                    x2: Math.random() * laserGame.canvas.width,
+                    y2: Math.random() * laserGame.canvas.height,
+                };
+                selectedPattern.push(newLaser);
+            }
+
+            laserGame.laserPositions = selectedPattern;
+        }
+
+        function startStage3() {
+            console.log('Rozpoczynanie etapu 3: System Laserowy');
+            showStage('stage3');
+            laserGame.lives = getDifficultySetting('laserLives');
+            laserGame.timeLeft = getDifficultySetting('laserTime');
+            laserGame.isActive = true;
+
+            document.getElementById('laserLives').textContent = laserGame.lives;
+            document.getElementById('laserTime').textContent = laserGame.timeLeft;
+            document.getElementById('laserStatus').textContent = 'Aktywny';
+            
+            resetLaserPlayerPosition(); // Reset player position for game start
+            setupStaticLasers(); // Set up new static laser positions for this round
+            startLaserTimer();
+            requestAnimationFrame(updateLaserGame); // Start animation loop
+            document.addEventListener('keydown', handleLaserMovement);
+
+            // Add touch event listeners for player movement (swipe gestures for arrows)
+            const hammer = new Hammer(laserGame.canvas);
+            hammer.get('swipe').set({ direction: Hammer.DIRECTION_ALL });
+
+            hammer.on('swipeleft', (ev) => handleLaserMovement({ key: 'ArrowLeft' }));
+            hammer.on('swiperight', (ev) => handleLaserMovement({ key: 'ArrowRight' }));
+            hammer.on('swipeup', (ev) => handleLaserMovement({ key: 'ArrowUp' }));
+            hammer.on('swipedown', (ev) => handleLaserMovement({ key: 'ArrowDown' }));
+        }
+
+        function handleLaserMovement(e) {
+            if (!laserGame.isActive) return;
+            
+            const speed = 10; // Player movement speed
+            const player = laserGame.player;
+            
+            switch(e.key) {
+                case 'w':
+                case 'W':
+                case 'ArrowUp':
+                    player.y = Math.max(10, player.y - speed);
+                    break;
+                case 's':
+                case 'S':
+                case 'ArrowDown':
+                    player.y = Math.min(laserGame.canvas.height - 10, player.y + speed);
+                    break;
+                case 'a':
+                case 'A':
+                case 'ArrowLeft':
+                    player.x = Math.max(10, player.x - speed);
+                    break;
+                case 'd':
+                case 'D':
+                case 'ArrowRight':
+                    player.x = Math.min(laserGame.canvas.width - 10, player.x + speed);
+                    break;
+            }
+        }
+
+        function updateLaserGame() {
+            if (!laserGame.isActive) return;
+            
+            const ctx = laserGame.ctx;
+            const canvas = laserGame.canvas;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw target
+            ctx.fillStyle = '#00ff00'; /* Vibrant green */
+            ctx.beginPath();
+            ctx.arc(laserGame.target.x, laserGame.target.y, 15, 0, 2 * Math.PI); /* Larger target */
+            ctx.fill();
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Draw static lasers
+            ctx.strokeStyle = '#ff0000'; /* Vibrant red */
+            ctx.lineWidth = 3; /* Thicker lasers */
+            laserGame.laserPositions.forEach(laser => {
+                ctx.beginPath();
+                ctx.moveTo(laser.x1, laser.y1);
+                ctx.lineTo(laser.x2, laser.y2);
+                ctx.stroke();
+
+                // Add a glow effect to lasers
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#ff0000';
+                ctx.stroke();
+                ctx.shadowBlur = 0; // Reset shadow
+
+                // Simple collision check (distance from player to laser line segment)
+                const distThreshold = 12; // How close player needs to be to laser
+                if (distToSegmentSquared({ x: laser.x1, y: laser.y1 }, { x: laser.x2, y: laser.y2 }, laserGame.player) < distThreshold * distThreshold) {
+                    hitByLaser();
+                }
+            });
+            
+            // Draw player
+            ctx.fillStyle = '#00ffff'; /* Vibrant cyan */
+            ctx.beginPath();
+            ctx.arc(laserGame.player.x, laserGame.player.y, 10, 0, 2 * Math.PI); /* Larger player dot */
+            ctx.fill();
+            ctx.strokeStyle = '#00ffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Check if player reached target
+            const distToTarget = Math.sqrt(
+                Math.pow(laserGame.player.x - laserGame.target.x, 2) + 
+                Math.pow(laserGame.player.y - laserGame.target.y, 2)
+            );
+            if (distToTarget < 20) { // If player is close enough to target
+                endLaserGame(true);
+                return; // Stop animation loop
+            }
+
+            requestAnimationFrame(updateLaserGame);
+        }
+
+        // Helper function for distance squared from a point to a line segment
+        function dist2(v, w) { return Math.pow(v.x - w.x, 2) + Math.pow(v.y - w.y, 2); }
+        function distToSegmentSquared(p1, p2, p) {
+            const l2 = dist2(p1, p2);
+            if (l2 === 0) return dist2(p, p1);
+            let t = ((p.x - p1.x) * (p2.x - p1.x) + (p.y - p1.y) * (p2.y - p1.y)) / l2;
+            t = Math.max(0, Math.min(1, t));
+            return dist2(p, { x: p1.x + t * (p2.x - p1.x), y: p1.y + t * (p2.y - p1.y) });
+        }
+
+        function hitByLaser() {
+            laserGame.lives--;
+            document.getElementById('laserLives').textContent = laserGame.lives;
+            showMessageBox('Uderzyłeś w laser! Tracisz życie.', 'error');
+            resetLaserPlayerPosition(); // Move player back to start
+
+            if (laserGame.lives <= 0) {
+                endLaserGame(false);
+            }
+        }
+
+        function startLaserTimer() {
+            if (laserGame.timer) clearInterval(laserGame.timer);
+            laserGame.timer = setInterval(() => {
+                laserGame.timeLeft--;
+                document.getElementById('laserTime').textContent = laserGame.timeLeft;
+                
+                if (laserGame.timeLeft <= 0) {
+                    endLaserGame(false);
+                }
+            }, 1000);
+        }
+
+        function endLaserGame(success) {
+            laserGame.isActive = false;
+            clearInterval(laserGame.timer);
+            document.removeEventListener('keydown', handleLaserMovement);
+            // Remove Hammer.js event listeners to prevent conflicts
+            if (laserGame.canvas) {
+                const hammer = new Hammer(laserGame.canvas);
+                hammer.off('swipeleft swipe right swipeup swipedown');
+            }
+
+            if (success) {
+                document.getElementById('laserStatus').textContent = 'Cel osiągnięty!';
+                showMessageBox('System laserowy ominięty!', 'success');
+                setTimeout(() => completeStage(3), 1000);
+            } else {
+                document.getElementById('laserStatus').textContent = 'Misja nieudana!';
+                showMessageBox('Misja nieudana! Zbyt wiele uderzeń w laser lub czas minął.', 'error');
+                setTimeout(() => resetLaser(), 1500);
+            }
+        }
+
+        function resetLaser() {
+            clearInterval(laserGame.timer);
+            laserGame.isActive = false;
+            // Re-initialize for a fresh start
+            setTimeout(() => startStage3(), 1000);
+        }
+
+        // === STAGE 4: CCTV HACK ===
+        function startStage4() {
+            console.log('Rozpoczynanie etapu 4: Hack Kamer CCTV');
+            showStage('stage4');
+            cameraGame.currentStep = 0;
+            cameraGame.hackedCameras = [];
+            document.getElementById('activeCameras').textContent = 4;
+            document.getElementById('cameraSequence').textContent = cameraGame.sequence.join(' → '); // Show full sequence
+            document.getElementById('cameraStatus').textContent = 'Monitoring aktywny';
+            resetCameraDisplay(); // Ensure all cameras are active initially
+        }
+
+        function toggleCamera(cameraId) {
+            const expectedCamera = cameraGame.sequence[cameraGame.currentStep];
+            
+            if (cameraId === expectedCamera && !cameraGame.hackedCameras.includes(cameraId)) {
+                // Correct camera clicked and not already hacked
+                cameraGame.hackedCameras.push(cameraId);
+                cameraGame.currentStep++;
+                
+                const camera = document.getElementById(`camera${cameraId}`);
+                const indicator = document.getElementById(`indicator${cameraId}`);
+                
+                camera.classList.add('hacked');
+                indicator.textContent = '🟢 OFFLINE';
+                indicator.classList.remove('active');
+                indicator.classList.add('inactive');
+                
+                document.getElementById('activeCameras').textContent = 4 - cameraGame.hackedCameras.length;
+                
+                // Update remaining sequence or show "Completed"
+                if (cameraGame.currentStep < cameraGame.sequence.length) {
+                    document.getElementById('cameraSequence').textContent = cameraGame.sequence.slice(cameraGame.currentStep).join(' → ');
+                } else {
+                    document.getElementById('cameraSequence').textContent = 'Ukończono!';
+                }
+
+                showMessageBox(`Kamera ${cameraId} wyłączona pomyślnie!`, 'success');
+                
+                // Check if all cameras are hacked
+                if (cameraGame.hackedCameras.length === cameraGame.sequence.length) {
+                    document.getElementById('cameraStatus').textContent = 'Wszystkie kamery offline!';
+                    showMessageBox('Wszystkie kamery offline! Etap ukończony.', 'success');
+                    setTimeout(() => completeStage(4), 1000);
+                }
+            } else {
+                // Incorrect camera clicked or already hacked
+                showMessageBox('Błędna kolejność lub kamera już wyłączona! Resetowanie systemu kamer.', 'error');
+                resetCameras();
+            }
+        }
+
+        function resetCameraDisplay() {
+            for (let i = 1; i <= 4; i++) {
+                const camera = document.getElementById(`camera${i}`);
+                const indicator = document.getElementById(`indicator${i}`);
+                
+                camera.classList.remove('hacked');
+                indicator.textContent = '🔴 AKTYWNA';
+                indicator.classList.add('active');
+                indicator.classList.remove('inactive');
+            }
+        }
+
+        function resetCameras() {
+            cameraGame.currentStep = 0;
+            cameraGame.hackedCameras = [];
+            
+            document.getElementById('activeCameras').textContent = 4;
+            document.getElementById('cameraSequence').textContent = cameraGame.sequence.join(' → ');
+            document.getElementById('cameraStatus').textContent = 'Monitoring aktywny';
+            
+            resetCameraDisplay();
+        }
+
+        // === STAGE 5: ARROW SEQUENCE GAME (NEW) ===
+        function startStage5() {
+            console.log('Rozpoczynanie etapu 5: Wzór dezaktywacji alarmu');
+            showStage('stage5');
+            resetArrowGame();
+        }
+
+        function resetArrowGame() {
+            arrowGame.currentLevel = 1;
+            arrowGame.playerInputSequence = [];
+            clearInterval(arrowGame.displayTimeout);
+            arrowGame.inputAllowed = false;
+            
+            document.getElementById('arrowCurrentLevel').textContent = arrowGame.currentLevel;
+            document.getElementById('arrowGameStatus').textContent = 'Oczekuje wzoru';
+            document.getElementById('arrowLevelText').textContent = `Poziom ${arrowGame.currentLevel}`;
+            
+            displayArrowSequence();
+        }
+
+        function displayArrowSequence() {
+            const currentLevelData = arrowGame.levels[arrowGame.currentLevel - 1];
+            if (!currentLevelData) {
+                // Should not happen if logic is correct, but as a fallback
+                showMessageBox('Błąd: Nie znaleziono danych dla tego poziomu.', 'error');
+                return;
+            }
+
+            arrowGame.currentSequence = currentLevelData.sequence;
+            arrowGame.playerInputSequence = []; // Clear player input for new sequence
+            arrowGame.inputAllowed = false; // Disable input during display
+
+            const arrowDisplayElement = document.getElementById('currentArrowDisplay');
+            arrowDisplayElement.innerHTML = ''; // Clear previous arrow
+
+            let displayIndex = 0;
+            const displayNextArrow = () => {
+                if (displayIndex < currentLevelData.display.length) {
+                    arrowDisplayElement.textContent = currentLevelData.display[displayIndex];
+                    displayIndex++;
+                    arrowGame.displayTimeout = setTimeout(displayNextArrow, 800); // Display each arrow for 0.8s
+                } else {
+                    arrowDisplayElement.textContent = '?'; // Hide arrow after sequence
+                    document.getElementById('arrowGameStatus').textContent = 'Wprowadź swój wzór!';
+                    showMessageBox('Zapamiętaj i wprowadź wzór!', 'info');
+                    arrowGame.inputAllowed = true; // Enable input after sequence
+                }
+            };
+            displayNextArrow(); // Start displaying the sequence
+        }
+
+        function submitArrow(direction) {
+            if (!arrowGame.inputAllowed) {
+                showMessageBox('Poczekaj na zakończenie wyświetlania wzoru.', 'info', 1500);
+                return;
+            }
+
+            arrowGame.playerInputSequence.push(direction);
+            document.getElementById('arrowGameStatus').textContent = `Wprowadzono: ${arrowGame.playerInputSequence.join(', ')}`;
+
+            // Check current input against the sequence
+            const expectedDirection = arrowGame.currentSequence[arrowGame.playerInputSequence.length - 1];
+
+            if (direction === expectedDirection) {
+                if (arrowGame.playerInputSequence.length === arrowGame.currentSequence.length) {
+                    // Sequence completed for current level
+                    showMessageBox('Wzorzec poprawny! Przechodzisz do następnego poziomu.', 'success');
+                    arrowGame.currentLevel++;
+                    document.getElementById('arrowCurrentLevel').textContent = arrowGame.currentLevel;
+
+                    if (arrowGame.currentLevel > arrowGame.levels.length) {
+                        showMessageBox('Wszystkie wzorce dezaktywacji ukończone!', 'success');
+                        setTimeout(() => completeStage(5), 1000);
+                    } else {
+                        document.getElementById('arrowLevelText').textContent = `Poziom ${arrowGame.currentLevel}`;
+                        setTimeout(displayArrowSequence, 1500); // Start next level after a short delay
+                    }
+                } else {
+                    // Correct so far, continue input
+                    showMessageBox('Poprawnie!', 'info', 800);
+                }
+            } else {
+                // Incorrect input
+                showMessageBox('Nieprawidłowy wzorzec! Resetowanie poziomu.', 'error');
+                document.getElementById('arrowGameStatus').textContent = 'Błąd! Resetowanie...';
+                setTimeout(displayArrowSequence, 1500); // Reset current level
+            }
+        }
+
+        // === STAGE 6: TERMINAL ===
+        function startStage6() {
+            console.log('Rozpoczynanie etapu 6: Konsola Główna');
+            showStage('stage6');
+            initializeTerminal();
+        }
+
+        function initializeTerminal() {
+            terminalGame.commands = [];
+            terminalGame.currentCommand = 0;
+            terminalGame.output = ['Witaj w Konsoli Głównej. Wpisz "help" po listę komend.', 'root@security-system:~# '];
+            
+            updateTerminalDisplay();
+            document.getElementById('terminalInput').focus();
+        }
+
+        function executeCommand() {
+            const input = document.getElementById('terminalInput');
+            const command = input.value.trim();
+            
+            if (command === '') return;
+            
+            // Add command to history
+            terminalGame.output.push(`root@security-system:~# ${command}`);
+            
+            // Process command
+            processTerminalCommand(command);
+            
+            // Clear input
+            input.value = '';
+            
+            // Update display
+            updateTerminalDisplay();
+            
+            // Check progress
+            updateTerminalProgress();
+        }
+
+        function processTerminalCommand(command) {
+            const cmd = command.toLowerCase().trim();
+            
+            switch(cmd) {
+                case 'ls':
+                    terminalGame.output.push('vault.key  security.conf  override.exe  backup.db');
+                    if (!terminalGame.commands.includes('ls')) {
+                        terminalGame.commands.push('ls');
+                    }
+                    break;
+                    
+                case 'cat vault.key':
+                    terminalGame.output.push('VAULT_KEY=7F4A9B2C8E1D6F3A');
+                    terminalGame.output.push('ENCRYPTION_LEVEL=256');
+                    terminalGame.output.push('ACCESS_REQUIRED=ROOT');
+                    if (!terminalGame.commands.includes('cat vault.key')) {
+                        terminalGame.commands.push('cat vault.key');
+                    }
+                    break;
+                    
+                case 'sudo override':
+                    if (terminalGame.commands.includes('cat vault.key')) {
+                        terminalGame.output.push('Inicjowanie sekwencji nadpisania...');
+                        terminalGame.output.push('[sudo] hasło dla root: ********');
+                        terminalGame.output.push('Dostęp przyznany: Uprawnienia ROOT włączone');
+                        if (!terminalGame.commands.includes('sudo override')) {
+                            terminalGame.commands.push('sudo override');
+                        }
+                    } else {
+                        terminalGame.output.push('Błąd: klucz skarbca wymagany najpierw.');
+                    }
+                    break;
+                    
+                case 'unlock vault':
+                    if (terminalGame.commands.includes('sudo override')) {
+                        terminalGame.output.push('Odblokowywanie skarbca...');
+                        terminalGame.output.push('Blokada biometryczna: WYŁĄCZONA');
+                        terminalGame.output.push('Siatka laserowa: WYŁĄCZONA');
+                        terminalGame.output.push('System CCTV: OFFLINE');
+                        terminalGame.output.push('System alarmowy: WYCISZONY');
+                        terminalGame.output.push('SKARBIEC ODBLOKOWANY Pomyślnie!');
+                        if (!terminalGame.commands.includes('unlock vault')) {
+                            terminalGame.commands.push('unlock vault');
+                        }
+                    } else {
+                        terminalGame.output.push('Błąd: niewystarczające uprawnienia. Użyj "sudo override" najpierw.');
+                    }
+                    break;
+                    
+                case 'exit':
+                    if (terminalGame.commands.includes('unlock vault')) {
+                        terminalGame.output.push('Zamykanie bezpiecznego połączenia...');
+                        terminalGame.output.push('Sesja zakończona.');
+                        if (!terminalGame.commands.includes('exit')) {
+                            terminalGame.commands.push('exit');
+                        }
+                        showMessageBox('Misja zakończona sukcesem!', 'success');
+                        setTimeout(() => completeStage(6), 1000);
+                    } else {
+                        terminalGame.output.push('Błąd: skarbiec musi być najpierw odblokowany.');
+                    }
+                    break;
+                    
+                case 'clear':
+                    terminalGame.output = ['System Security Terminal v2.1', 'root@security-system:~# '];
+                    break;
+                    
+                default:
+                    terminalGame.output.push(`bash: ${command}: polecenie nie znalezione`);
+                    terminalGame.output.push('Wpisz "help" po dostępne polecenia.');
+                    break;
+            }
+        }
+
+        function updateTerminalDisplay() {
+            const terminal = document.getElementById('terminalOutput');
+            terminal.innerHTML = ''; // Clear previous content
+            terminalGame.output.forEach(line => {
+                const lineDiv = document.createElement('div');
+                lineDiv.classList.add('terminal-line');
+                if (line.startsWith('root@security-system:~#')) {
+                    lineDiv.innerHTML = `${line}<span class="cursor">_</span>`;
+                    lineDiv.classList.add('command');
+                } else if (line.includes('Błąd') || line.includes('nie znalezione')) {
+                    lineDiv.classList.add('error');
+                } else if (line.includes('Pomyślnie') || line.includes('Dostęp przyznany')) {
+                    lineDiv.classList.add('success');
+                } else {
+                    lineDiv.classList.add('output');
+                }
+                terminal.appendChild(lineDiv);
+            });
+            
+            // Scroll to bottom
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        function updateTerminalProgress() {
+            document.getElementById('terminalCommands').textContent = `${terminalGame.commands.length}/5`;
+            document.getElementById('rootAccess').textContent = 
+                terminalGame.commands.includes('sudo override') ? 'TAK' : 'NIE';
+            
+            // Check if all required commands are executed (minimum set for game completion via terminal)
+            const requiredCount = terminalGame.requiredCommands.filter(cmd => terminalGame.commands.includes(cmd)).length;
+
+            if (terminalGame.commands.includes('exit') && terminalGame.commands.includes('unlock vault')) {
+                document.getElementById('terminalStatus').textContent = 'Root access uzyskany!';
+                // Stage completion handled in 'exit' command for logical flow
+            } else if (terminalGame.commands.includes('sudo override')) {
+                document.getElementById('terminalStatus').textContent = 'Masz dostęp ROOT!';
+            } else {
+                document.getElementById('terminalStatus').textContent = 'Oczekuje poleceń';
+            }
+        }
+
+        function clearTerminal() {
+            terminalGame.output = ['Terminal wyczyszczony.', 'root@security-system:~# '];
+            updateTerminalDisplay();
+        }
+
+        // === PROGRESS AND ACHIEVEMENT MANAGEMENT ===
+        function updateProgressDisplay() {
+            const progress = Math.floor((gameState.completedStages.length / 6) * 100);
+            document.getElementById('overallProgress').textContent = progress;
+            document.getElementById('overallProgressBar').style.width = progress + '%';
+
+            // Update achievement cards visually
+            for (let i = 1; i <= 6; i++) {
+                const achievement = document.getElementById(`achievement${i}`);
+                if (gameState.completedStages.includes(i)) {
+                    achievement.classList.add('completed');
+                } else {
+                    achievement.classList.remove('completed');
+                }
+            }
+        }
+
+        function unlockAchievement(achievementId) {
+            // Already handled by updateProgressDisplay, but good to have a dedicated function
+            console.log('Odblokowano osiągnięcie:', achievementId);
+        }
+
+        // === GAME COMPLETION ===
+        function completeGame() {
+            console.log('Gra ukończona!');
+            
+            gameState.totalTime = Date.now() - gameState.startTime;
+            const totalMinutes = Math.floor(gameState.totalTime / 60000);
+            const totalSeconds = Math.floor((gameState.totalTime % 60000) / 1000);
+            
+            document.getElementById('finalDifficulty').textContent = 
+                gameState.difficulty === 'easy' ? 'Początkujący' : 
+                gameState.difficulty === 'medium' ? 'Średni' : 'Ekspert';
+            document.getElementById('totalTime').textContent = 
+                `${totalMinutes.toString().padStart(2, '0')}:${totalSeconds.toString().padStart(2, '0')}`;
+            document.getElementById('achievementCount').textContent = `${gameState.completedStages.length}/6`;
+            
+            showStage('successStage');
+        }
+
+        function restartGame() {
+            // Reset all game variables
+            gameState = {
+                currentStage: 0,
+                completedStages: [],
+                difficulty: document.getElementById('difficultyLevel').value,
+                startTime: null,
+                achievements: [],
+                totalTime: 0,
+                playerDistrict: '',
+                playerNick: '',
+                playerPreGamePassword: ''
+            };
+            
+            // Reset challenge statuses on intro screen
+            for (let i = 1; i <= 6; i++) {
+                const status = document.getElementById(`status${i}`);
+                if (status) {
+                    status.textContent = 'Nieukończone';
+                    status.classList.remove('completed');
+                }
+                const achievement = document.getElementById(`achievement${i}`);
+                if (achievement) {
+                    achievement.classList.remove('completed');
+                }
+            }
+            
+            // Clear any active timers
+            clearInterval(matrixGame.timer);
+            clearInterval(laserGame.timer);
+            clearInterval(arrowGame.displayTimeout); // Clear arrow game timeout
+
+            // Clear admin-set password for new game
+            matrixGame.passwordLine = '';
+            
+            updateProgressDisplay();
+            startPreGameQuestions(); // Go back to pre-game questions
+            
+            console.log('Gra zrestartowana.');
+        }
+
+        function goToIntro() {
+            restartGame(); // Go back to intro, which also resets the game
+        }
+
+        // === UTILITY FUNCTIONS ===
+        function getDifficultySetting(setting) {
+            const difficulty = gameState.difficulty;
+            const settings = {
+                'easy': { matrixAttempts: 5, matrixTime: 90, laserLives: 5, laserTime: 60 },
+                'medium': { matrixAttempts: 3, matrixTime: 60, laserLives: 3, laserTime: 45 },
+                'hard': { matrixAttempts: 2, matrixTime: 45, laserLives: 2, laserTime: 30 }
+            };
+            return settings[difficulty][setting];
+        }
+
+        // === CUSTOM MESSAGE BOX ===
+        let messageBoxTimeout;
+        function showMessageBox(message, type = 'info', duration = 3000) {
+            const msgBox = document.getElementById('messageBox');
+            msgBox.textContent = message;
+            msgBox.className = ''; // Clear previous classes
+            msgBox.classList.add(type); // Add type class (success, error, info)
+            msgBox.style.display = 'block';
+            msgBox.style.opacity = '1';
+
+            if (messageBoxTimeout) {
+                clearTimeout(messageBoxTimeout);
+            }
+            messageBoxTimeout = setTimeout(() => {
+                msgBox.style.opacity = '0';
+                setTimeout(() => msgBox.style.display = 'none', 300); // Hide after fade out
+            }, duration);
+        }
+
+        // === LOADING OVERLAY FUNCTIONS ===
+        function showLoadingOverlay(message = 'Ładowanie...') {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const loadingText = document.getElementById('loadingText');
+            loadingText.textContent = message;
+            loadingOverlay.classList.add('visible');
+        }
+
+        function hideLoadingOverlay() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.remove('visible');
+        }
+
+        // === ERROR HANDLING (for debugging) ===
+        window.addEventListener('error', function(e) {
+            console.error('Błąd JavaScript:', e.error);
+            console.error('Plik:', e.filename);
+            console.error('Linia:', e.lineno);
+            showMessageBox(`Wystąpił błąd: ${e.message}`, 'error', 5000);
+        });
+
+        // === EXPORT DEBUG FUNCTIONS ===
+        window.gameDebug = {
+            skipToStage: function(stage) {
+                gameState.currentStage = stage;
+                switch(stage) {
+                    case 1: startStage1(); break;
+                    case 2: startStage2(); break;
+                    case 3: startStage3(); break;
+                    case 4: startStage4(); break;
+                    case 5: startStage5(); break;
+                    case 6: startStage6(); break;
+                    default: completeGame(); break;
+                }
+            },
+            completeAllStages: function() {
+                for (let i = 1; i <= 6; i++) {
+                    completeStage(i);
+                }
+            },
+            getGameState: function() {
+                return gameState;
+            }
+        };
+
+        // === TERMS MODAL HANDLING ===
+        function acceptTerms() {
+            document.getElementById('termsModal').style.display = 'none';
+            startPreGameQuestions(); // Show pre-game questions after accepting terms
+        }
+
+        // Load Hammer.js for touch gestures
+        // This is a common CDN for Hammer.js. Ensure it's correctly loaded.
+        const hammerScript = document.createElement('script');
+        hammerScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js';
+        hammerScript.onload = () => console.log('Hammer.js loaded!');
+        document.head.appendChild(hammerScript);
+
+        console.log('Cyber Włamanie - System załadowany pomyślnie!');
+        console.log('Użyj window.gameDebug dla funkcji debugowania');
+    </script>
+</body>
+</html>
